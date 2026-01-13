@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dnevni vic – Slovenija</title>
+  <style>
+   body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0b3d91, #b11226);
+}
+
+    .card {
+      background: white;
+      max-width: 600px;
+      width: 90%;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 1.8rem;
+    }
+    .joke {
+      font-size: 1.2rem;
+      margin: 1.5rem 0;
+    }
+    .meta {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+          .card {
+      border: 4px solid gold;
+    }
+    h1 {
+      color: #b11226;
+    }
+    .joke {
+      font-style: italic;
+    }
+    .yu {
+      font-size: 0.9rem;
+      color: #b11226;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🇸🇮 Dnevni vic 🇸🇮</h1>
+    <div class="joke" id="joke"></div>
+    <div class="meta" id="meta"></div>
+    <p class="meta">
+      🔗 Link do današnjega vica: <br />
+      <a id="permalink" href="#">kopiraj link</a>
+    </p>
+  </div>
+
+  <script>
+function getDayOfYear(date) {
+  const start = new Date(date.getFullYear(), 0, 0);
+  const diff =
+    date - start +
+    (start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000;
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+// omogoča permalink: ?date=2026-03-14
+function getDateFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const d = params.get("date");
+  return d ? new Date(d) : new Date();
+}
+
+const today = getDateFromURL();
+const dayOfYear = getDayOfYear(today);
+
+fetch("dnevni_vic.json")
+  .then(r => r.json())
+  .then(data => {
+    const joke = data.jokes.find(j => j.day === dayOfYear);
+
+    if (!joke) throw new Error("Vic ne obstaja");
+
+
+    document.getElementById("joke").innerText = joke.text;
+    document.getElementById("meta").innerText =
+      `Datum: ${joke.date} • Dan v letu: ${joke.day}`;
+
+    const baseUrl = window.location.origin + window.location.pathname;
+link.innerText = baseUrl + `?date=${joke.date}`;
+link.href = `?date=${joke.date}`;
+  })
+  .catch(err => {
+    document.getElementById("joke").innerText =
+      "Vic danes žal ni na voljo 😞";
+    console.error(err);
+  });
+</script>
+
+
+</body>
+</html>
